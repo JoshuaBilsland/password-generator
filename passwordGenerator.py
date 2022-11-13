@@ -7,21 +7,27 @@ def displayMenu():
     print("3 - Close the Program")
     print("******************")
 
+
 def getMenuChoice():
     return int(input("Enter Menu Choice Using the Related Number: "))
+
 
 def displayError(errorDescription):
     errorBorder = "\n*************************************************\n"
     print(errorBorder + "ERROR - " + errorDescription + errorBorder)
+
     
 def generateRandomLowercaseLetter():
     return chr(random.randint(ord("a"),ord("z")))
 
+
 def generateRandomUppercaseLetter():
     return chr(random.randint(ord("A"),ord("Z")))
 
+
 def generateNumberOrSymbol():
     return chr(random.randint(33,64))
+
 
 def generatePassword(passwordLength):
     # Store the randomly generated characters
@@ -42,6 +48,7 @@ def generatePassword(passwordLength):
     passwordCharList = lowercaseLetters + uppercaseLetters + symbolsAndNumbers
     random.shuffle(passwordCharList) # Shuffle all the generated characters to make the password
     return ''.join(passwordCharList) # Turn list values into a string which will be the password 
+
         
 def newEntry(passwordLength):
     entryDescription = input("What is the username and password for? : ")
@@ -54,7 +61,44 @@ def newEntry(passwordLength):
     entry.append(entryPassword)
     
     return entry
+
+
+def saveEntriesToTextFile(entriesList):
+    # Create file
+    fileCreated = False
+    fileName = "entries"
+    counter = 0 # Number to add to end of fileName
+    while not fileCreated:
+        try:
+            if counter == 0:
+                file = open(fileName+".txt", "x")
+            else:
+                file = open(fileName+str(counter)+".txt","x")
+        except FileExistsError:
+            counter += 1
+        else:
+            fileCreated = True
+            print(file.name)
     
+    # Write to file
+    if counter == 0:
+        file = open(fileName+".txt","w")
+    else:
+        file = open(fileName+str(counter)+".txt","w")
+    
+    entryNumber = 1 # used to number each entry that is written
+    for entry in entriesList:
+        file.write("ENTRY "+str(entryNumber)+" -> | ") # Number the entry that is to be written
+        for data in entry:
+            file.write(data)
+            file.write(" | ") # separate each part of the entry
+        file.write("\n\n") # New line + empty space between each entry
+        entryNumber += 1
+        
+    file.close()    
+    
+        
+
 # Main
 entriesList = [] # 2D list of all the entries the user has made
 running = True
@@ -63,15 +107,15 @@ while running:
     displayMenu()
     userChoice = getMenuChoice()
     
-    if userChoice == 1:
+    if userChoice == 1: # Add new entry
         entriesList.append(newEntry(15))
         print(entriesList)
-    elif userChoice == 2:
-        print(2)
-    elif userChoice == 3:
+    elif userChoice == 2: # Save entries to text file
+        saveEntriesToTextFile(entriesList)
+    elif userChoice == 3: # Exit program
         confirm = input("Are You Sure You Want To Close The Program (Y/N): ")
         if confirm == "Y":
             running = False
-    else:
+    else: # Invalid input
         displayError("Please Only Enter an Number From the Available Menu Choices")
 
